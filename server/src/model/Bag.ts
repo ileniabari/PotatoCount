@@ -13,11 +13,4 @@ export default class Bag {
         const currentQuantity = this.potatoes.get(potato) || 0;
         this.potatoes.set(potato, currentQuantity + quantity);
     }
-
-    toJSON() {
-        return {
-            name: this.name,
-            potatoes: this.potatoes
-        };
-    }
 }
