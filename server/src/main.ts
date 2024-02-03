@@ -11,21 +11,29 @@ const bagService = new BagService();
 app.get('/bags', function (req, res) {
   const bags = bagService.getBags();
 
-  console.log(bags);
-
-  res.send(bags.map(it => it.toJSON()));
+  res.send(bags);
 });
 
 app.post('/bags', function (req, res) {
   const bagName = req.body.bag_name;
-
-  console.log(req.body);
 
   const newBag = new Bag(bagName);
 
   const bag = bagService.addBag(newBag);
 
   res.send(bag);
+});
+
+app.get('/bags/:bag_name', function (req, res) {
+  const bagName = req.params.bag_name;
+
+  const bag = bagService.getBag(bagName);
+
+  if (!bag) {
+    res.sendStatus(404);
+  } else {
+    res.send(bag);
+  }
 });
 
 app.listen(8080)
