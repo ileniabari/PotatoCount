@@ -48,7 +48,7 @@ app.get('/bags/:bag_name/potato_list', function (req, res) {
     res.sendStatus(404);
     return;
   }
-  
+
   res.send(bag);
 });
 
@@ -64,6 +64,8 @@ app.put('/bags/:bag_name/potato_list/:potato_name', function (req, res) {
     return;
   }
 
+  const quantityToAdd = parseInt(qty);
+
   const bag = bagService.getBag(bagName);
 
   if (!bag) {
@@ -71,7 +73,7 @@ app.put('/bags/:bag_name/potato_list/:potato_name', function (req, res) {
     return;
   }
 
-  bag.addPotato(potatoName, qty);
+  bag.addPotato(potatoName, quantityToAdd);
 
   const updatedPotatoQty = bag.getPotatoQuantity(potatoName);
 
