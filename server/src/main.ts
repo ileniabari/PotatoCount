@@ -33,9 +33,10 @@ app.get('/bags/:bag_name', function (req, res) {
 
   if (!bag) {
     res.sendStatus(404);
-  } else {
-    res.send(bag);
+    return;
   }
+
+  res.send(bag);
 });
 
 app.get('/bags/:bag_name/potato_list', function (req, res) {
