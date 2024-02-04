@@ -21,9 +21,9 @@ app.post('/bags', function (req, res) {
 
   const newBag = new Bag(bagName);
 
-  const bag = bagService.addBag(newBag);
+  bagService.addBag(newBag);
 
-  res.send(bag);
+  res.send(newBag);
 });
 
 app.get('/bags/:bag_name', function (req, res) {
