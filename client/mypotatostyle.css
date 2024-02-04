@@ -1,0 +1,45 @@
+.insertData {
+    text-align: center;
+    margin: auto;
+    background-color: goldenrod;
+    width: 100%;
+}
+
+#potatoArea{
+    width: 100%;
+    color: white;
+    text-align: center;
+}
+
+.form {
+    margin:auto;
+    margin-bottom: 20px;
+    margin-top: 5px;
+    width: 150px;
+    height: 20px;
+}
+
+.btn {
+    padding-left: 18px;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#insert {
+    background-color: green;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#remove {
+    background-color: red;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#potatoImg {
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+
+}
