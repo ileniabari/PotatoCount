@@ -50,4 +50,30 @@ app.get('/bags/:bag_name/potato_list', function (req, res) {
   }
 });
 
-app.listen(8080)
+app.put('/bags/:bag_name/potato_list/:potato_name', function (req, res) {
+  const bagName = req.params.bag_name;
+  const potatoName = req.params.potato_name;
+
+  const qty = req.body.qty;
+
+  if (!qty) {
+    res.sendStatus(400);
+    res.send({ "error": "invalid qty" });
+    return;
+  }
+
+  const bag = bagService.getBag(bagName);
+
+  if (!bag) {
+    res.sendStatus(404);
+    return;
+  }
+
+  bag.addPotato(potatoName, qty);
+
+  const updatedPotatoQty = bag.getPotatoQuantity(potatoName);
+
+  res.send(updatedPotatoQty.toString());
+});
+
+app.listen(8080);
