@@ -7,7 +7,7 @@ export default class Bag {
         this.potatoes = {};
     }
 
-    addPotato(potatoName: string, quantity: number) {
+    addPotato(potatoName: string, quantity: number): number {
         let potatoQty = this.potatoes[potatoName];
 
         if (potatoQty == undefined) {
