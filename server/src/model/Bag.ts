@@ -1,16 +1,25 @@
-import Potato from './Potato';
-
 export default class Bag {
     name: string;
-    potatoes: Map<Potato, number>;
+    potatoes: { [key: string]: number };
 
     constructor(name: string) {
         this.name = name;
-        this.potatoes = new Map();
+        this.potatoes = {};
     }
 
-    addPotato(potato: Potato, quantity: number) {
-        const currentQuantity = this.potatoes.get(potato) || 0;
-        this.potatoes.set(potato, currentQuantity + quantity);
+    addPotato(potatoName: string, quantity: number) {
+        let potatoQty = this.potatoes[potatoName];
+
+        if (potatoQty == undefined) {
+            this.potatoes[potatoName] = 0;
+        }
+
+        this.potatoes[potatoName] += quantity;
+
+        return potatoQty;
+    }
+
+    getPotatoQuantity(potatoName: string): number {
+        return this.potatoes[potatoName] || 0;
     }
 }
