@@ -15,7 +15,7 @@ export default class BagService {
     return this.bagMap.get(bagName) || null;
   }
 
-  addBag(bag: Bag) {
+  addBag(bag: Bag): void {
     this.bagMap.set(bag.name, bag);
   }
 }
