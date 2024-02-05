@@ -10,10 +10,13 @@
     <div id="potatoArea">
         <img src="Potato.png" id="potatoImg">
     </div>
-    <div class="insertData">
+    <div class="bagsArea">
         <input id="newBag" type="text" class="form">
         <button type="button" id="addBag">Create bag</button>
-        <button type="button" id="bag">Refresh bag</button>
+        <div id="buttons">
+        </div>
+    </div>
+    <div id="insertData">
         <form>
             <label> Insert your potato</label>
             <br>
@@ -23,11 +26,9 @@
             <br>
             <input type="number" min="0" class='form' id="qty">
         </form>
-    </div>
-    <div class=" insertData">
+
         <button type="button" id="insert">Add potatoes</button>
         <button type="button" id="remove">Remove potatoes</button>
-
     </div>
     <div id="bagArea">
 
@@ -35,24 +36,127 @@
     <script>
         const serverLink = 'http://localhost:8080'
 
-        document.getElementById("insert").addEventListener('click', handleInsert)
+        const appState = {
+            'bagName': '',
+            'potatoName': '',
+            'qty': ''
+        }
 
+        //event listener
+        document.getElementById("insert").addEventListener('click', handleInsert)
         document.getElementById("remove").addEventListener('click', handleRemove)
         document.getElementById('addBag').addEventListener('click', handleCreateNewBag)
-        document.getElementById('bag').addEventListener('click', handleRefreshBags)
+
+
+        ///Definition of the app state
         let potatoName = document.getElementById('potatoName')
-        let qty_input = document.getElementById('qty')
-       
-        let bagListTextArea = document.getElementById('bagArea')
+        potatoName.addEventListener('change', handleSelectPotatoName)
+        let qtyInput = document.getElementById('qty')
+        qtyInput.addEventListener('change', handleSelectPotatoQty)
 
-//handle and request of print all the bags
-        function handleRefreshBags() {
 
-            getBagList().then((bags) => {
-                let bagsList = bags;
-                bagListTextArea.innerText = bagsList.map((value, index, array) => value['name'])
-                console.log(bagsList)
+        //handle function
+        function handleSelectBagClick(evt) {
+            let buttonTargetId = evt.target.id
+            document.getElementById('insertData').style.display = 'block'
+            setAppStateBag(appState, buttonTargetId)
+        }
+
+        function handleSelectPotatoName(evt) {
+            setAppStatePotato(appState)
+        }
+
+        function handleSelectPotatoQty(evt) {
+            setAppStateQty(appState)
+        }
+
+        // set the appstate
+        function setAppStateBag(appState, name) {
+            appState['bagName'] = name
+            console.log(appState)
+        }
+
+        function setAppStatePotato(appState) {
+            appState['potatoName'] = potatoName.value
+        }
+
+        function setAppStateQty(appState) {
+            appState['qty'] = qtyInput.value
+        }
+
+
+        // handle functiona and post request of adding a new bag
+        function handleCreateNewBag() {
+            let bag_name = document.getElementById('newBag').value
+            createNewBag(bag_name).then((newBag) => {
+                getBagList().then((bags) => {
+                    let bagsList = bags;
+                    bagsList = bagsList.map((value, index, array) => value['name'])
+                    generateButtonBags(bagsList)
+                })
+
             })
+        }
+
+
+
+        async function createNewBag(bag_name) {
+            const response = await fetch(serverLink + '/bags', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ bag_name: bag_name })
+            }
+            )
+            const newBag = await response.json
+        }
+
+        //handle function and request of adding a new potato
+        function handleInsert() {
+            addPotato(appState['bagName']).then((potato) => {
+                console.log(potato)
+            })
+
+        }
+
+        async function addPotato(bag_name) {
+            const response = await fetch(serverLink + '/bags/' + bag_name + '/potato_list/' + appState['potatoName'], {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+                ,
+                body: JSON.stringify({ qty: appState['qty'] })
+            }
+            )
+            const potato = await response.json
+            return potato
+        }
+
+
+        //handle functiona d request o remove a certain quantity of a potato
+
+        function handleRemove() {
+            removePotato(appState['bagName']).then((potato) => {
+                console.log(potato)
+            })
+
+        }
+
+        async function removePotato(bag_name) {
+            let qty = '-' + appState['qty']
+            const response = await fetch(serverLink + '/bags/' + appState['bagName'] + '/potato_list/' + appState['potatoName'], {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+                ,
+                body: JSON.stringify({ qty: qty })
+            }
+            )
+            const potato = await response.json
+            return potato
         }
 
         async function getBagList() {
@@ -63,74 +167,21 @@
 
 
 
-// handle functiona and post request of adding a new bag
-         function handleCreateNewBag() {
-            let bag_name = document.getElementById('newBag').value
-            postNewBag(bag_name).then((newBag)=>{console.log(newBag)})
-            
-        }
-        async function postNewBag(bag_name){
-            const response = await fetch(serverLink + '/bags', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ bag_name: bag_name })
+
+        function generateButtonBags(bagsList) {
+            document.getElementById('buttons').innerHTML = ''
+
+            for (let i = 0; i < bagsList.length; i++) {
+                let button = document.createElement("button");
+                button.innerHTML = bagsList[i];
+                button.id = bagsList[i]
+                button.className = "buttonclass";
+                //button.onclick = function() {};
+                let buttonDiv = document.getElementById("buttons");
+                buttonDiv.appendChild(button);
+                button.addEventListener('click', handleSelectBagClick)
             }
-            )
-            const newBag= await response.json
         }
 
-//handle function and request of adding a new potato
-        function handleInsert() {
-            bag_name='Bag1'
-            addPotato(bag_name).then((potato) => {
-                console.log(potato)
-            })
-
-        }
-
-        async function addPotato(bag_name) {
-            let potato_name = potatoName.value
-            let qty = qty_input.value
-            const response = await fetch(serverLink + '/bags/' + bag_name + '/potato_list/' + potato_name, {
-                method: 'PUT',
-                headers: {
-                    "Content-Type": "application/json"
-                }
-                ,
-                body: JSON.stringify({ qty: qty })
-            }
-            )
-            const potato = await response.json
-            return potato
-        }
-
-
-        //handle functiona d request o remove a certain quantity of a potato
-
-        function handleRemove(){
-            bag_name='Bag1'
-            removePotato(bag_name).then((potato) => {
-                console.log(potato)
-            })
-
-        }
-
-        async function removePotato(bag_name){
-            let potato_name = potatoName.value
-            let qty = '-'+qty_input.value
-            const response = await fetch(serverLink + '/bags/' + bag_name + '/potato_list/' + potato_name, {
-                method: 'PUT',
-                headers: {
-                    "Content-Type": "application/json"
-                }
-                ,
-                body: JSON.stringify({ qty: qty })
-            }
-            )
-            const potato = await response.json
-            return potato
-        }
     </script>
 </body>

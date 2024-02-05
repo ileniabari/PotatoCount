@@ -1,4 +1,5 @@
-.insertData {
+#insertData {
+   display: none;
     text-align: center;
     margin: auto;
     background-color: goldenrod;
